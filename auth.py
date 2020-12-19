@@ -4,11 +4,12 @@ from flask import *
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
+import constants
 
 # added my cridentials
-AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
-ALGORITHMS = os.environ['ALGORITHMS']
-API_AUDIENCE = os.environ['API_AUDIENCE']
+AUTH0_DOMAIN = constants.AUTH0_DOMAIN
+ALGORITHMS = constants.ALGORITHMS
+API_AUDIENCE = constants.API_AUDIENCE
 
 # AuthError Exception
 '''

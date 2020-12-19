@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
 from datetime import datetime
 import json 
+import constants
 
 
 
@@ -13,7 +14,7 @@ import json
 # CONFIGS
 # ==========================================
 project_dir = os.path.dirname(os.path.abspath(__file__))
-database_path = os.environ['DATABASE_URL']
+database_path = 'postgres://postgres:1111@localhost:5432/agency'
 
 db = SQLAlchemy()
 

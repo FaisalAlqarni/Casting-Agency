@@ -6,7 +6,7 @@ from sqlalchemy import exc
 import json
 from flask_cors import CORS
 from flask.cli import with_appcontext
-from models import db_drop_and_create_all, setup_db, Movie, Actor, Helpers
+from models import db_drop_and_create_all, setup_db, Movie, Actor, Helpers, db
 from auth import AuthError, requires_auth
 
 
@@ -24,33 +24,6 @@ db_drop_and_create_all()
 # ==========================================
 # SEEDING
 # ==========================================
-@with_appcontext
-def seed():
-    """Seed the database."""
-    movie1 = Movie(title = "First Movie", release_date = "10/10/2010").save()
-    movie2 = Movie(title = "Second Movie", release_date = "1/12/2015").save()
-    movie3 = Movie(title = "Final Movie", release_date = "1/10/2018").save()
-    actor1 = Actor(name = "First", age = 18, gender = "male").save()
-    actor2 = Actor(name = "Second", age = 25, gender = "male").save()
-    actor3 = Actor(name = "Third", age = 40, gender = "male").save()
-    actor4 = Actor(name = "Thirds", age = 13, gender = "female").save()
-    actor5 = Actor(name = "wally", age = 16, gender = "femal").save()
-    actor6 = Actor(name = "jhon", age = 20, gender = "male").save()
-
-def register_commands(app):
-    """Register CLI commands."""
-    app.cli.add_command(seed)
-    
-register_commands(app)
-
-Helpers.assign_actors_to_movie([1,2,3,4,5,6], 1)
-Helpers.assign_actors_to_movie([2], 2)
-Helpers.assign_actors_to_movie([5,6], 3)
-Helpers.assign_movies_to_actor([2], 1)
-Helpers.assign_movies_to_actor([2, 3], 3)
-Helpers.assign_movies_to_actor([3], 4)
-
-
 
 # ==========================================
 # ROUTES
@@ -74,45 +47,71 @@ def get_actors():
     })
 
 
-# '''
-# @TODOx implement endpoint
-#     GET /drinks-detail
-#         it should require the 'get:drinks-detail' permission
-#         it should contain the drink.long() data representation
-#     returns status code 200 and json {"success": True, "drinks": drinks}
-#     where drinks is the list of drinks
-#         or appropriate status code indicating reason for failure
-# '''
+# @app.route('/movies/<int:id>', methods=['DELETE'])
+# # @requires_auth('delete:movies')
+# def delete_actor(payload, id):
+#     movie = Movie.query.filter_by(id=id).first()
+#     if not movie:
+#         return jsonify({'message': 'Movie not found.'})
+#     movie.delete()
+#     return jsonify({
+#         'message': movie.id + ' Deleted.',
+#         'success': True,
+#     }), 200
+
+    
+# @app.route('/actors/<int:id>', methods=['DELETE'])
+# # @requires_auth('delete:actors')
+# def delete_actor(payload, id):
+#     actor = Actor.query.filter_by(id=id).first()
+#     if not actor:
+#         return jsonify({'message': 'Actor not found.'})
+#     actor.delete()
+#     return jsonify({
+#         'message': actor.id + ' Deleted.',
+#         'success': True,
+#     }), 200
 
 
-# @app.route('/drinks-detail', methods=['GET'])
-# @requires_auth('get:drinks-detail')
-# def get_drinks_detail():
-#     try:
-#         all_drinks = Drink.query.all()
-#         drinks = [drink.short() for drink in all_drinks]
-#         return jsonify({
-#             'success': True,
-#             'drinks': drinks
-#         })
-#     except Exception:
-#         abort(500)
-
-
-# '''
-# @TODOx implement endpoint
-#     POST /drinks
-#         it should create a new row in the drinks table
-#         it should require the 'post:drinks' permission
-#         it should contain the drink.long() data representation
-#     returns status code 200 and json {"success": True, "drinks": drink}
-#     where drink an array containing only the newly created drink
-#         or appropriate status code indicating reason for failure
-# '''
+# @app.route('/movies', methods=['POST'])
+# # @requires_auth('post:movies')
+# def add_actor(payload):
+#     body = request.get_json()
+#     new_actor = Actor(
+#         name=body.get('name'),
+#         title=body.get('age'),
+#     )
+#     new_actor.save()
+#     return jsonify({
+#         'actor': new_actor.to_json(),
+#         'success': True
+#     }), 201
+    
+# @app.route('/actors', methods=['POST'])
+# # @requires_auth('post:actors')
+# def add_actor(payload):
+#     """Handles POST requests for actors.
+#     returns:
+#         - actor object
+#         - success message
+#     """
+#     body = request.get_json()
+#     new_actor = Actor(
+#         name=body.get('name'),
+#         bio=body.get('bio'),
+#         age=body.get('age'),
+#         gender=body.get('gender'),
+#         movie=body.get('movie')
+#     )
+#     new_actor.save()
+#     return jsonify({
+#         'actor': new_actor.to_json(),
+#         'success': True
+#     }), 201
 
 
 # @app.route('/drinks', methods=['POST'])
-# @requires_auth('post:drinks')
+# # @requires_auth('post:drinks')
 # def create_drinks():
 #     try:
 #         request_json = request.get_json()
@@ -127,19 +126,6 @@ def get_actors():
 #     except Exception:
 #         abort(500)
 
-
-# '''
-# @TODOx implement endpoint
-#     PATCH /drinks/<id>
-#         where <id> is the existing model id
-#         it should respond with a 404 error if <id> is not found
-#         it should update the corresponding row for <id>
-#         it should require the 'patch:drinks' permission
-#         it should contain the drink.long() data representation
-#     returns status code 200 and json {"success": True, "drinks": drink}
-#     where drink an array containing only the updated drink
-#         or appropriate status code indicating reason for failure
-# '''
 
 
 # @app.route('/drinks/<int:id>', methods=['PATCH'])
