@@ -68,26 +68,41 @@ def show_actor(id):
 @app.route('/movies/<int:id>', methods=['DELETE'])
 # @requires_auth('delete:movies')
 def delete_movie(id):
-    movie = Movie.query.filter_by(id=id).first()
-    if not movie:
-        return abort(404)
-    Helpers.delete(movie)
-    return jsonify({
-        'success': True,
-        'message': movie.id + ' is Deleted.',
-    }), 200
-    
+    try:
+        movie = Movie.query.filter_by(id=id).first()
+        if not movie:
+            return abort(404)
+        for ass in movie.actors:
+            db.session.delete(ass)
+
+        Helpers.delete(movie)
+        return jsonify({
+            'success': True,
+            'deleted': movie.id,
+        }), 200
+    except:
+        db.session.rollback()
+        abort(422)
+    finally:
+        db.session.close() 
+          
 @app.route('/actors/<int:id>', methods=['DELETE'])
 # @requires_auth('delete:actors')
 def delete_actor(id):
-    actor = Actor.query.filter_by(id=id).first()
-    if not actor:
-        return abort(404)
-    Helpers.delete(actor)
-    return jsonify({
-        'success': True,
-        'message': actor.id + ' is Deleted.',
-    }), 200
+    try:
+        actor = Actor.query.filter_by(id=id).first()
+        if not actor:
+            return abort(404)
+        Helpers.delete(actor)
+        return jsonify({
+            'success': True,
+            'deleted': actor.id,
+        }), 200
+    except:
+        db.session.rollback()
+        abort(422)
+    finally:
+        db.session.close()
 
 @app.route('/actors', methods=['POST'])
 # @requires_auth('post:movies')
@@ -136,7 +151,7 @@ def add_movie():
 
 @app.route('/movies/<int:id>', methods=['PATCH'])
 # @requires_auth('patch:drinks')
-def update_movie(self, id):
+def update_movie(id):
     the_movie = Movie.query.filter(Movie.id == id).one_or_none()
     if the_movie is None:
         return abort(404)
@@ -166,7 +181,7 @@ def update_movie(self, id):
         
 @app.route('/actors/<int:id>', methods=['PATCH'])
 # @requires_auth('patch:drinks')
-def update_actor(self, id):
+def update_actor(id):
     the_actor = Actor.query.filter(Actor.id == id).one_or_none()
     if the_actor is None:
         return abort(404)
@@ -202,13 +217,12 @@ def update_actor(self, id):
 # ==========================================
 # Error Handling
 # ==========================================
-
 @app.errorhandler(422)
 def unprocessable(error):
     return jsonify({
         "success": False,
         "error": 422,
-        "message": "unprocessable"
+        "message": "UNPROCESSABLE"
     }), 422
 
 @app.errorhandler(404)
