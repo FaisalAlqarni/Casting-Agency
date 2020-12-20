@@ -146,9 +146,10 @@ class Helpers():
 association
 an association table, to apply many-to-many relationship
 '''
-association = db.Table('association', Base.metadata,
+association = db.Table('association',
     Column('movie_id', Integer, db.ForeignKey('movies.id')),
-    Column('actor_id', Integer, db.ForeignKey('actors.id'))
+    Column('actor_id', Integer, db.ForeignKey('actors.id')),
+    # db.UniqueConstraint('movie_id', 'actor_id', name='UC_movie_id_actor_id')
 )
 
 '''
@@ -160,7 +161,12 @@ class Movie(db.Model):
     id = Column(Integer(), primary_key=True)
     title = Column(String(), nullable=False)
     release_date =  Column(String(180), nullable=False)
-    actors = db.relationship('Actor', secondary = association, backref=db.backref('associations', lazy='joined'))
+    actors = db.relationship('Actor', 
+                             secondary = association, 
+                             backref="movie", 
+                             lazy='dynamic',
+                             cascade="all",
+                             passive_deletes=True)
 
     def __init__(self, title,  release_date):
         self.title = title
@@ -187,7 +193,11 @@ class Actor(db.Model):
     name = Column(String(), nullable=False)
     age =  Column(Integer(), nullable=False)
     gender =  Column(String(10), nullable=False)
-    movies = db.relationship('Movie', secondary = association, backref=db.backref('associations', lazy='joined'))
+    # movies = db.relationship('Movie', 
+    #                          secondary = association, 
+    #                          backref="actor", 
+    #                          cascade="all",
+    #                          passive_deletes=True)
     
     def short(self):
         return {
@@ -195,7 +205,7 @@ class Actor(db.Model):
             'name': self.name,
             'age': self.age,
             'gender': self.gender,
-            'movies': [movie.title for movie in self.movies]
+            # 'movies': [movie.title for movie in self.movies]
         }
 
     def __repr__(self):
