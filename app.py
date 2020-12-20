@@ -26,6 +26,7 @@ db_drop_and_create_all()
 # ROUTES
 # ==========================================
 @app.route('/movies', methods=['GET'])
+@requires_auth('get:movies')
 def get_movies():
     movies = Movie.query.all()
     movies_short = [movie.short() for movie in movies]
@@ -35,6 +36,7 @@ def get_movies():
     })
 
 @app.route('/actors', methods=['GET'])
+@requires_auth('get:actors')
 def get_actors():
     actors = Actor.query.all()
     actors_short = [actor.short() for actor in actors]
@@ -44,7 +46,7 @@ def get_actors():
     })
 
 @app.route('/movies/<int:id>', methods=['GET'])
-# @requires_auth('delete:movies')
+@requires_auth('get:movies')
 def show_movie(id):
     movie = Movie.query.filter_by(id=id).first()
     if not movie:
@@ -55,7 +57,7 @@ def show_movie(id):
     }), 200
     
 @app.route('/actors/<int:id>', methods=['GET'])
-# @requires_auth('delete:actors')
+@requires_auth('get:actors')
 def show_actor(id):
     actor = Actor.query.filter_by(id=id).first()
     if not actor:
@@ -66,7 +68,7 @@ def show_actor(id):
     }), 200
 
 @app.route('/movies/<int:id>', methods=['DELETE'])
-# @requires_auth('delete:movies')
+@requires_auth('delete:movies')
 def delete_movie(id):
     try:
         movie = Movie.query.filter_by(id=id).first()
@@ -87,7 +89,7 @@ def delete_movie(id):
         db.session.close() 
           
 @app.route('/actors/<int:id>', methods=['DELETE'])
-# @requires_auth('delete:actors')
+@requires_auth('delete:actors')
 def delete_actor(id):
     try:
         actor = Actor.query.filter_by(id=id).first()
@@ -105,7 +107,7 @@ def delete_actor(id):
         db.session.close()
 
 @app.route('/actors', methods=['POST'])
-# @requires_auth('post:movies')
+@requires_auth('post:actors')
 def add_actor():
     body = request.get_json()
     name = body.get('name', None)
@@ -128,7 +130,7 @@ def add_actor():
         db.session.close()
     
 @app.route('/movies', methods=['POST'])
-# @requires_auth('post:movies')
+@requires_auth('post:movies')
 def add_movie():
     body = request.get_json()
     title = body.get('title', None)
@@ -150,7 +152,7 @@ def add_movie():
         db.session.close()
 
 @app.route('/movies/<int:id>', methods=['PATCH'])
-# @requires_auth('patch:drinks')
+@requires_auth('patch:movies')
 def update_movie(id):
     the_movie = Movie.query.filter(Movie.id == id).one_or_none()
     if the_movie is None:
@@ -180,7 +182,7 @@ def update_movie(id):
         db.session.close()
         
 @app.route('/actors/<int:id>', methods=['PATCH'])
-# @requires_auth('patch:drinks')
+@requires_auth('patch:actors')
 def update_actor(id):
     the_actor = Actor.query.filter(Actor.id == id).one_or_none()
     if the_actor is None:
