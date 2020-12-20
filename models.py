@@ -31,6 +31,10 @@ def db_drop_and_create_all():
     db.create_all()
     db_seeding()
 
+'''
+db_seeding()
+    inserts a dummy data into a database
+'''
 def db_seeding():
     movie1 = Movie(title = "First Movie", release_date = "10/10/2010")
     movie2 = Movie(title = "Second Movie", release_date = "1/12/2015")
