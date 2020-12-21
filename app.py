@@ -2,9 +2,8 @@
 # IMPORTS
 # ==========================================
 import os
-from flask import Flask, request, jsonify, abort
-from sqlalchemy import exc
-import json
+from flask import *
+from sqlalchemy import *
 from flask_cors import CORS
 from flask.cli import with_appcontext
 from models import db_drop_and_create_all, setup_db, Movie, Actor, Helpers, db
@@ -15,7 +14,8 @@ from auth import AuthError, requires_auth
 # ==========================================
 # CONFIGS
 # ==========================================
-app = Flask(__name__)
+app = Flask(__name__,static_url_path='/static')
+app.secret_key = "super secret key"
 setup_db(app)
 CORS(app)
 db_drop_and_create_all()
@@ -25,6 +25,14 @@ db_drop_and_create_all()
 # ==========================================
 # ROUTES
 # ==========================================
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/callback')
+def callback_handling():
+    return render_template('logged-in.html')
+    
 @app.route('/movies', methods=['GET'])
 @requires_auth('get:movies')
 def get_movies():
