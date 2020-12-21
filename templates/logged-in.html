@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>index</title>
+    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="static/fonts/ionicons.min.css" />
+    <link rel="stylesheet" href="static/css/styles.min.css" />
+  </head>
+
+  <body>
+    <div class="text-center features-boxed">
+      <div class="container">
+        <div class="intro">
+          <h2
+            class="display-4 text-monospace text-center text-info shadow-none"
+          >
+            Welcome back to Casting Agency<br />
+          </h2>
+          <p class="text-center text-black-50">
+            The Casting Agency models a company that is responsible for creating
+            movies and managing and assigning actors to those movies. This is a
+            system to simplify and streamline the process.<br />
+          </p>
+          <p class="text-center text-black-50"><br /></p>
+          <h1 class="text-center text-info">&nbsp;Your TOKEN<br /></h1>
+        </div>
+      </div>
+      <p class="text-center text-black-50">
+        You can copy &amp; paste the token in the post man collection to test
+        the APIs.<br/>
+      </p>
+      <textarea class="bg-white border-info shadow-sm form-control-lg" id="Token" cols= 100% readonly></textarea>
+      <a class="btn btn-info btn-block btn-lg text-center" role="button" onclick="copyToken()">Copy Token</a>
+
+      <div class="container">
+        <div class="intro">
+          <p class="text-center text-black-50"><br /></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-basic">
+      <footer>
+        <div class="social">
+          <a href="www.linkedin.com/in/faisalalqarni"
+            ><i class="icon ion-social-linkedin"></i></a
+          ><a href="https://github.com/FaisalAlqarni"
+            ><i class="icon ion-social-github"></i
+          ></a>
+        </div>
+        <p class="text-info copyright">
+          <strong>Made with ❤ By: Faisal Al-Qarni</strong>
+        </p>
+      </footer>
+    </div>
+    <div class="features-boxed"></div>
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+      function copyToken() {
+        var getToken = document.getElementById("Token");
+        getToken.select();
+        document.execCommand("copy").trim();
+      }
+
+        const fragment = window.location.hash.substr(1).split('&')[0].split('=');
+        console.log(fragment[1]);
+        document.getElementById("Token").innerHTML = fragment[1]
+    </script>
+  </body>
+</html>
