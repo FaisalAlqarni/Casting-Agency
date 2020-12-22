@@ -9,16 +9,14 @@ from models import db_drop_and_create_all, setup_db, Movie, Actor, Helpers, db
 from auth import AuthError, requires_auth
 
 
-
 # ==========================================
 # CONFIGS
 # ==========================================
-app = Flask(__name__,static_url_path='/static')
+app = Flask(__name__, static_url_path='/static')
 app.secret_key = "super secret key"
 setup_db(app)
 CORS(app)
 db_drop_and_create_all()
-
 
 
 # ==========================================
@@ -28,10 +26,12 @@ db_drop_and_create_all()
 def index():
     return render_template('index.html')
 
+
 @app.route('/callback')
 def callback_handling():
     return render_template('logged-in.html')
-    
+
+
 @app.route('/movies', methods=['GET'])
 @requires_auth('get:movies')
 def get_movies():
@@ -41,6 +41,7 @@ def get_movies():
         'success': True,
         'Movies': movies_short
     })
+
 
 @app.route('/actors', methods=['GET'])
 @requires_auth('get:actors')
@@ -52,6 +53,7 @@ def get_actors():
         'Actors': actors_short
     })
 
+
 @app.route('/movies/<int:id>', methods=['GET'])
 @requires_auth('get:movies')
 def show_movie(id):
@@ -62,7 +64,8 @@ def show_movie(id):
         'success': True,
         'data': movie.short()
     }), 200
-    
+
+
 @app.route('/actors/<int:id>', methods=['GET'])
 @requires_auth('get:actors')
 def show_actor(id):
@@ -73,6 +76,7 @@ def show_actor(id):
         'success': True,
         'data': actor.short()
     }), 200
+
 
 @app.route('/movies/<int:id>', methods=['DELETE'])
 @requires_auth('delete:movies')
@@ -93,8 +97,9 @@ def delete_movie(id):
         db.session.rollback()
         abort(422)
     finally:
-        db.session.close() 
-          
+        db.session.close()
+
+
 @app.route('/actors/<int:id>', methods=['DELETE'])
 @requires_auth('delete:actors')
 def delete_actor(id):
@@ -113,6 +118,7 @@ def delete_actor(id):
     finally:
         db.session.close()
 
+
 @app.route('/actors', methods=['POST'])
 @requires_auth('post:actors')
 def add_actor():
@@ -120,11 +126,11 @@ def add_actor():
     name = body.get('name', None)
     age = body.get('age', None)
     gender = body.get('gender', None)
-    
+
     if ((name is None) or (age is None) or (gender is None)):
         return abort(422)
     try:
-        new_actor = Actor(name = name, age = age, gender = gender)
+        new_actor = Actor(name=name, age=age, gender=gender)
         Helpers.insert(new_actor)
         return jsonify({
             'success': True,
@@ -135,18 +141,19 @@ def add_actor():
         abort(422)
     finally:
         db.session.close()
-    
+
+
 @app.route('/movies', methods=['POST'])
 @requires_auth('post:movies')
 def add_movie():
     body = request.get_json()
     title = body.get('title', None)
     release_date = body.get("release_date", None)
-    
+
     if ((title is None) or (release_date is None)):
         return abort(422)
     try:
-        new_movie = Movie(title = title, release_date = release_date)
+        new_movie = Movie(title=title, release_date=release_date)
         Helpers.insert(new_movie)
         return jsonify({
             'success': True,
@@ -158,17 +165,18 @@ def add_movie():
     finally:
         db.session.close()
 
+
 @app.route('/movies/<int:id>', methods=['PATCH'])
 @requires_auth('patch:movies')
 def update_movie(id):
     the_movie = Movie.query.filter(Movie.id == id).one_or_none()
     if the_movie is None:
         return abort(404)
-    
+
     body = request.get_json()
     title = body.get('title', None)
     release_date = body.get("release_date", None)
-    
+
     if ((title is None) and (release_date is None)):
         return abort(422)
     try:
@@ -176,7 +184,7 @@ def update_movie(id):
             the_movie.title = title
         if release_date is not None:
             the_movie.release_date = release_date
-        
+
         Helpers.update(the_movie)
         return jsonify({
             'success': True,
@@ -187,19 +195,20 @@ def update_movie(id):
         abort(422)
     finally:
         db.session.close()
-        
+
+
 @app.route('/actors/<int:id>', methods=['PATCH'])
 @requires_auth('patch:actors')
 def update_actor(id):
     the_actor = Actor.query.filter(Actor.id == id).one_or_none()
     if the_actor is None:
         return abort(404)
-    
+
     body = request.get_json()
     name = body.get('name', None)
     age = body.get("age", None)
     gender = body.get("gender", None)
-    
+
     if ((name is None) and (age is None) and (gender is None)):
         return abort(422)
     try:
@@ -209,7 +218,7 @@ def update_actor(id):
             the_actor.age = age
         if gender is not None:
             the_actor.gender = gender
-        
+
         Helpers.update(the_actor)
         return jsonify({
             'success': True,
@@ -220,7 +229,6 @@ def update_actor(id):
         abort(422)
     finally:
         db.session.close()
-
 
 
 # ==========================================
@@ -234,6 +242,7 @@ def unprocessable(error):
         "message": "UNPROCESSABLE"
     }), 422
 
+
 @app.errorhandler(404)
 def resource_not_found(error):
     return jsonify({
@@ -242,6 +251,7 @@ def resource_not_found(error):
         "message": "RECORD NOT FOUND"
     }), 404
 
+
 @app.errorhandler(500)
 def server_error(error):
     return jsonify({
@@ -249,6 +259,7 @@ def server_error(error):
         "error": 500,
         "message": "SERVER ERROR"
     }), 500
+
 
 @app.errorhandler(AuthError)
 def auth_error(error):
