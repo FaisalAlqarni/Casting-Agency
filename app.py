@@ -1,7 +1,6 @@
 # ==========================================
 # IMPORTS
 # ==========================================
-import os
 from flask import *
 from sqlalchemy import *
 from flask_cors import CORS
