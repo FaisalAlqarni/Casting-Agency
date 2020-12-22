@@ -6,7 +6,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
 from datetime import datetime
 import json 
-import constants
 from flask_migrate import Migrate
 
 
@@ -15,7 +14,7 @@ from flask_migrate import Migrate
 # CONFIGS
 # ==========================================
 project_dir = os.path.dirname(os.path.abspath(__file__))
-database_path = 'postgres://jwwsigkdbkpuzf:67217f9ad3ba2ccc05c9b584505a7c938788451a7a5b1117049218ab8ffadc6b@ec2-52-5-176-53.compute-1.amazonaws.com:5432/ddsehqr6jp4nui'
+database_path = os.environ.get('DATABASE_URL')
 
 db = SQLAlchemy()
 
@@ -27,7 +26,6 @@ def setup_db(app):
     db.init_app(app)
 
 def db_drop_and_create_all():
-    db.drop_all()
     db.create_all()
     db_seeding()
 
