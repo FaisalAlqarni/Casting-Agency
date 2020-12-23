@@ -12,8 +12,6 @@ use the live URL to see teh roles Credentials and sign in using them and getting
 - Heroku
 - Postman
 
-## Tech Used
-You can use teh provided postman
 ### Installing Dependencies
 
 #### Python 3.7.9
