@@ -34,7 +34,7 @@ def create_app(test_config=None):
         return render_template('logged-in.html')
 
     @app.route('/movies', methods=['GET'])
-    # @requires_auth('get:movies')
+    @requires_auth('get:movies')
     def get_movies():
         try:
             movies = Movie.query.all()
@@ -50,7 +50,7 @@ def create_app(test_config=None):
             db.session.close()
 
     @app.route('/actors', methods=['GET'])
-    # @requires_auth('get:actors')
+    @requires_auth('get:actors')
     def get_actors():
         try:
             actors = Actor.query.all()
@@ -66,7 +66,7 @@ def create_app(test_config=None):
             db.session.close()
 
     @app.route('/movies/<int:id>', methods=['GET'])
-    # @requires_auth('get:movies')
+    @requires_auth('get:movies')
     def show_movie(id):
         try:
             movie = Movie.query.filter_by(id=id).first()
@@ -83,7 +83,7 @@ def create_app(test_config=None):
             db.session.close()
 
     @app.route('/actors/<int:id>', methods=['GET'])
-    # @requires_auth('get:actors')
+    @requires_auth('get:actors')
     def show_actor(id):
         try:
             actor = Actor.query.filter_by(id=id).first()
@@ -100,7 +100,7 @@ def create_app(test_config=None):
             db.session.close()
 
     @app.route('/movies/<int:id>', methods=['DELETE'])
-    # @requires_auth('delete:movies')
+    @requires_auth('delete:movies')
     def delete_movie(id):
         try:
             movie = Movie.query.filter_by(id=id).first()
@@ -121,7 +121,7 @@ def create_app(test_config=None):
             db.session.close()
 
     @app.route('/actors/<int:id>', methods=['DELETE'])
-    # @requires_auth('delete:actors')
+    @requires_auth('delete:actors')
     def delete_actor(id):
         try:
             actor = Actor.query.filter_by(id=id).first()
@@ -139,7 +139,7 @@ def create_app(test_config=None):
             db.session.close()
 
     @app.route('/actors', methods=['POST'])
-    # @requires_auth('post:actors')
+    @requires_auth('post:actors')
     def add_actor():
         body = request.get_json()
         name = body.get('name', None)
@@ -162,7 +162,7 @@ def create_app(test_config=None):
             db.session.close()
 
     @app.route('/movies', methods=['POST'])
-    # @requires_auth('post:movies')
+    @requires_auth('post:movies')
     def add_movie():
         body = request.get_json()
         title = body.get('title', None)
@@ -184,7 +184,7 @@ def create_app(test_config=None):
             db.session.close()
 
     @app.route('/movies/<int:id>', methods=['PATCH'])
-    # @requires_auth('patch:movies')
+    @requires_auth('patch:movies')
     def update_movie(id):
         the_movie = Movie.query.filter(Movie.id == id).one_or_none()
         if the_movie is None:
@@ -214,7 +214,7 @@ def create_app(test_config=None):
             db.session.close()
 
     @app.route('/actors/<int:id>', methods=['PATCH'])
-    # @requires_auth('patch:actors')
+    @requires_auth('patch:actors')
     def update_actor(id):
         the_actor = Actor.query.filter(Actor.id == id).one_or_none()
         if the_actor is None:
