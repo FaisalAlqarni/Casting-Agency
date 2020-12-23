@@ -3,34 +3,35 @@
 # ==========================================
 from flask import *
 from sqlalchemy import *
-from flask.cli import with_appcontext 
+from flask.cli import with_appcontext
 from flask_cors import CORS
 from models import setup_db, Movie, Actor, Helpers, db
 from auth import AuthError, requires_auth
+
+
 def create_app(test_config=None):
 
     # ==========================================
     # CONFIGS
     # ==========================================
-    app = Flask(__name__, static_url_path='/static', instance_relative_config=True)
+    app = Flask(__name__, static_url_path='/static',
+                instance_relative_config=True)
     app.secret_key = "super secret key"
     setup_db(app)
     CORS(app)
     # db_drop_and_create_all()
 
-
     # ==========================================
     # ROUTES
     # ==========================================
+
     @app.route('/')
     def index():
         return render_template('index.html')
 
-
     @app.route('/callback')
     def callback_handling():
         return render_template('logged-in.html')
-
 
     @app.route('/movies', methods=['GET'])
     # @requires_auth('get:movies')
@@ -44,7 +45,7 @@ def create_app(test_config=None):
             })
         except:
             db.session.rollback()
-            abort(422)
+            abort(404)
         finally:
             db.session.close()
 
@@ -60,7 +61,7 @@ def create_app(test_config=None):
             })
         except:
             db.session.rollback()
-            abort(422)
+            abort(404)
         finally:
             db.session.close()
 
@@ -77,7 +78,7 @@ def create_app(test_config=None):
             }), 200
         except:
             db.session.rollback()
-            abort(422)
+            abort(404)
         finally:
             db.session.close()
 
@@ -94,7 +95,7 @@ def create_app(test_config=None):
             }), 200
         except:
             db.session.rollback()
-            abort(422)
+            abort(404)
         finally:
             db.session.close()
 
@@ -119,7 +120,6 @@ def create_app(test_config=None):
         finally:
             db.session.close()
 
-
     @app.route('/actors/<int:id>', methods=['DELETE'])
     # @requires_auth('delete:actors')
     def delete_actor(id):
@@ -138,7 +138,6 @@ def create_app(test_config=None):
         finally:
             db.session.close()
 
-
     @app.route('/actors', methods=['POST'])
     # @requires_auth('post:actors')
     def add_actor():
@@ -148,7 +147,7 @@ def create_app(test_config=None):
         gender = body.get('gender', None)
 
         if ((name is None) or (age is None) or (gender is None)):
-            return abort(422)
+            return abort(400)
         try:
             new_actor = Actor(name=name, age=age, gender=gender)
             Helpers.insert(new_actor)
@@ -161,7 +160,6 @@ def create_app(test_config=None):
             abort(422)
         finally:
             db.session.close()
-
 
     @app.route('/movies', methods=['POST'])
     # @requires_auth('post:movies')
@@ -184,7 +182,6 @@ def create_app(test_config=None):
             abort(422)
         finally:
             db.session.close()
-
 
     @app.route('/movies/<int:id>', methods=['PATCH'])
     # @requires_auth('patch:movies')
@@ -215,7 +212,6 @@ def create_app(test_config=None):
             abort(422)
         finally:
             db.session.close()
-
 
     @app.route('/actors/<int:id>', methods=['PATCH'])
     # @requires_auth('patch:actors')
@@ -250,18 +246,17 @@ def create_app(test_config=None):
         finally:
             db.session.close()
 
-
     # ==========================================
     # Error Handling
     # ==========================================
-    @app.errorhandler(422)
-    def unprocessable(error):
+
+    @app.errorhandler(400)
+    def bad_request(error):
         return jsonify({
             "success": False,
-            "error": 422,
-            "message": "UNPROCESSABLE"
-        }), 422
-
+            "error": 400,
+            "message": "BAD REQUEST"
+        }), 400
 
     @app.errorhandler(404)
     def resource_not_found(error):
@@ -271,6 +266,13 @@ def create_app(test_config=None):
             "message": "RECORD NOT FOUND"
         }), 404
 
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            "success": False,
+            "error": 422,
+            "message": "UNPROCESSABLE"
+        }), 422
 
     @app.errorhandler(500)
     def server_error(error):
@@ -280,7 +282,6 @@ def create_app(test_config=None):
             "message": "SERVER ERROR"
         }), 500
 
-
     @app.errorhandler(AuthError)
     def auth_error(error):
         return jsonify({
@@ -288,5 +289,5 @@ def create_app(test_config=None):
             "error": error.status_code,
             "message": error.error['description']
         }), error.status_code
-        
+
     return app
