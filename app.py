@@ -175,7 +175,7 @@ def create_app(test_config=None):
             Helpers.insert(new_movie)
             return jsonify({
                 'success': True,
-                'actor': new_movie.short()
+                'movie': new_movie.short()
             }), 200
         except:
             db.session.rollback()
