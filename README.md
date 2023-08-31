@@ -1,4 +1,4 @@
-# FSND-Casting-Agency
+# Casting-Agency
 The Casting Agency models a company that is responsible for creating movies and managing and assigning actors to those movies. This is a system to simplify and streamline the process.
 
 ## LIVE URL : https://capstone-misk.herokuapp.com/
